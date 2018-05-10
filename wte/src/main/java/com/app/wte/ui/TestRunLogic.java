@@ -78,7 +78,7 @@ public class TestRunLogic implements Serializable {
 				// login
 				try {
 					int pid = Integer.parseInt(productId);
-					Product product = findProduct(pid);
+					TestRunHistory product = findTestRunHistory(pid);
 					view.selectRow(product);
 				} catch (NumberFormatException e) {
 				}
@@ -86,7 +86,7 @@ public class TestRunLogic implements Serializable {
 		}
 	}
 
-	private Product findProduct(int productId) {
+	private TestRunHistory findTestRunHistory(int productId) {
 		return null;
 	}
 
@@ -108,11 +108,11 @@ public class TestRunLogic implements Serializable {
 		setFragmentParameter("");
 	}
 
-	public void editProduct(TestRunUI product) {
+	public void editProduct(TestRunHistory product) {
 		if (product == null) {
 			setFragmentParameter("");
 		} else {
-			setFragmentParameter(product.getId() + "");
+			setFragmentParameter(product.getName());
 		}
 		view.editProduct(product);
 	}
@@ -120,10 +120,10 @@ public class TestRunLogic implements Serializable {
 	public void newTestCase() {
 		view.clearSelection();
 		setFragmentParameter("new");
-		view.editProduct(new TestRunUI());
+		view.editProduct(new TestRunHistory());
 	}
 
-	public void rowSelected(TestRunUI product) {
+	public void rowSelected(TestRunHistory product) {
 		view.editProduct(product);
 
 	}

@@ -79,16 +79,16 @@ public class HomeView extends Home {
         }
     }
     
-    private TestRunUI currentProduct;
+    private TestRunHistory currentProduct;
 
     private HomeView() {
     }
 
-    public void editProduct(TestRunUI product) {
+    public void editProduct(TestRunHistory product) {
         currentProduct = product;
         setUpData();
 
-        delete.setEnabled(product != null && product.getId() != -1);
+        delete.setEnabled(product != null && product.getName() != null);
 
         // Scroll to the top
         // As this is not a Panel, using JavaScript
@@ -127,9 +127,9 @@ public class HomeView extends Home {
     	MainUI ui= MainUI.get();
     	ui.navigateTo(ProcessingView.VIEW_PATH);
         
-        if (binder.writeBeanIfValid(currentProduct)) {
+        /*if (binder.writeBeanIfValid(currentProduct)) {
             //viewLogic.saveProduct(currentProduct);
-        }
+        }*/
     }
 
     private void onDelete() {
@@ -151,11 +151,11 @@ public class HomeView extends Home {
     }
 
     private void setUpData() {
-        if (currentProduct != null) {
+       /* if (currentProduct != null) {
             binder.readBean(currentProduct);
         } else {
             binder.removeBean();
-        }
+        }*/
     }
     
     private void upload() {

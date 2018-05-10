@@ -1,10 +1,14 @@
 package com.app.wte.ui;
 
-public class TestRun {
+import java.util.Date;
+
+public class TestRunHistory {
 
 	private String name;
 
 	private String status;
+
+	private Date date;
 
 	/**
 	 * @return the name
@@ -34,6 +38,21 @@ public class TestRun {
 	 */
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return the date
+	 */
+	public Date getDate() {
+		return date;
+	}
+
+	/**
+	 * @param date
+	 *            the date to set
+	 */
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 }

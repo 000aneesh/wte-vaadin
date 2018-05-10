@@ -1,11 +1,14 @@
 package com.app.wte.ui;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.app.wte.ui.HomeView.HomeFormFactory;
 import com.app.wte.ui.TestRunLogic.TestRunLogicFactory;
+import com.app.wte.util.TestResultComponent;
 import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -37,19 +40,22 @@ public class TestRunView extends CssLayout implements View {
 
 	@Autowired
 	private HomeFormFactory formFactory;
+	
+	@Autowired
+	TestResultComponent testResultComponent;
 
-	private ProductGrid grid;
+	private TestRunHistoryGrid grid;
 
 	private HomeView form;
 
 	private TestRunLogic viewLogic;
 
-	private Button newProduct;
+	private Button newTestRun;
 
 	@Autowired
 	private TestRunLogicFactory logicFactory;
 	private TextField filter;
-	private ConfigurableFilterDataProvider<TestRunUI, Void, String> filterDataProvider;
+	private ConfigurableFilterDataProvider<TestRunHistory, Void, String> filterDataProvider;
 
 	public HorizontalLayout createTopBar() {
 		filter = new TextField();
@@ -58,15 +64,15 @@ public class TestRunView extends CssLayout implements View {
 		// Trigger a refresh of data when the filter is updated
 		filter.addValueChangeListener(event -> filterDataProvider.setFilter(event.getValue()));
 
-		newProduct = new Button("New Test Run");
-		newProduct.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		newProduct.setIcon(VaadinIcons.PLUS_CIRCLE);
-		newProduct.addClickListener(event -> viewLogic.newTestCase());
+		newTestRun = new Button("New Test Run");
+		newTestRun.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		newTestRun.setIcon(VaadinIcons.PLUS_CIRCLE);
+		newTestRun.addClickListener(event -> viewLogic.newTestCase());
 		
 		HorizontalLayout topLayout = new HorizontalLayout();
 		topLayout.setWidth("100%");
 		topLayout.addComponent(filter);
-		topLayout.addComponent(newProduct);
+		topLayout.addComponent(newTestRun);
 		topLayout.setComponentAlignment(filter, Alignment.MIDDLE_LEFT);
 		topLayout.setExpandRatio(filter, 1);
 		topLayout.setStyleName("top-bar");
@@ -87,22 +93,22 @@ public class TestRunView extends CssLayout implements View {
 	}
 
 	public void setNewProductEnabled(boolean enabled) {
-		newProduct.setEnabled(enabled);
+		newTestRun.setEnabled(enabled);
 	}
 
 	public void clearSelection() {
 		grid.getSelectionModel().deselectAll();
 	}
 
-	public void selectRow(Product row) {
+	public void selectRow(TestRunHistory row) {
 		grid.getSelectionModel().select(row);
 	}
 
-	public Product getSelectedRow() {
+	public TestRunHistory getSelectedRow() {
 		return grid.getSelectedRow();
 	}
 
-	public void editProduct(TestRunUI product) {
+	public void editProduct(TestRunHistory product) {
 		if (product != null) {
 			form.addStyleName("visible");
 			form.setEnabled(true);
@@ -133,14 +139,17 @@ public class TestRunView extends CssLayout implements View {
 		addStyleName("crud-view");
 		HorizontalLayout topLayout = createTopBar();
 
-		grid = new ProductGrid();
+		grid = new TestRunHistoryGrid();
 		grid.asSingleSelect().addValueChangeListener(event -> {
-//			viewLogic.rowSelected(grid.getSelectedRow());
+			viewLogic.rowSelected(grid.getSelectedRow());
 			});
 
-		// filterDataProvider = dataProvider.withConfigurableFilter();
-		// grid.setDataProvider(filterDataProvider);
+//		 filterDataProvider = dataProvider.withConfigurableFilter();
+//		 grid.setDataProvider(filterDataProvider);
+		List<TestRunHistory> gridDetails = gridDetails();
+		grid.setItems(gridDetails);
 
+		
 		VerticalLayout barAndGridLayout = new VerticalLayout();
 		barAndGridLayout.addComponent(topLayout);
 		barAndGridLayout.addComponent(grid);
@@ -158,5 +167,13 @@ public class TestRunView extends CssLayout implements View {
 
 		viewLogic.init();
 	}
+	
+	private List<TestRunHistory> gridDetails(){
+		
+		return testResultComponent.getTestRunHistoryList();
+		
+	}
+	
+	
 
 }
