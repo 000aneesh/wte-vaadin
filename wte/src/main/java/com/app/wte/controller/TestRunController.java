@@ -130,4 +130,24 @@ public class TestRunController {
 		return testRecords;
 	}
 	
+	/*@RequestMapping(value="/getDownloadFileName") 
+    @ResponseBody
+    public String getDownloadFileName(@RequestParam("testCase") String testCase) throws JSONException{      
+           String inputFileName =null;
+           
+           ExecutionContext executionContext=testEngine.getTestResult(testCase);
+           if(executionContext == null){
+                  executionContext= WTEUtils.jaxbXMLToObject(testCase, uploadPath);
+           }
+           if(executionContext != null && executionContext.getConfigDataMap() != null){
+                  inputFileName = executionContext.getConfigDataMap().get("templatePattern")+executionContext.getResultFolderName();
+           }
+           File inputFile =new File(inputFileName);
+           //inputFile.getAbsolutePath()
+           JSONObject obj =new JSONObject();
+           obj.put("FileName", inputFileName);
+           return obj.toString();
+    }*/
+
+	
 }

@@ -89,13 +89,13 @@ public class MainUI extends UI{
 
         menu = new Menu(navigator);
         // View are registered automatically by Vaadin Spring support
-        menu.addViewButton(HomeViewBkup.VIEW_PATH, HomeViewBkup.VIEW_NAME,
-                VaadinIcons.EDIT);
-        menu.addViewButton(HomeViewBkup.VIEW_PATH, HomeViewBkup.VIEW_NAME,
-                VaadinIcons.INFO_CIRCLE);
-        menu.addViewButton(TestRunView.VIEW_PATH, TestRunView.VIEW_NAME, VaadinIcons.EXTERNAL_LINK);
+//        menu.addViewButton(HomeViewBkup.VIEW_PATH, HomeViewBkup.VIEW_NAME,
+//                VaadinIcons.EDIT);
+//        menu.addViewButton(HomeViewBkup.VIEW_PATH, HomeViewBkup.VIEW_NAME,
+//                VaadinIcons.INFO_CIRCLE);
+        menu.addViewButton(TestRunView.VIEW_PATH, TestRunView.VIEW_NAME, VaadinIcons.HOME);
         
-        menu.addViewButton(SampleCrudView.VIEW_NAME, SampleCrudView.VIEW_NAME, VaadinIcons.EXTERNAL_LINK);
+//        menu.addViewButton(SampleCrudView.VIEW_NAME, SampleCrudView.VIEW_NAME, VaadinIcons.EXTERNAL_LINK);
 
         navigator.addViewChangeListener(new ViewChangeHandler());
 

@@ -31,14 +31,14 @@ import com.vaadin.ui.UI;
 
 @SuppressWarnings("serial")
 
-//@SpringComponent
-//@Scope("prototype")
+// @SpringComponent
+// @Scope("prototype")
 @SpringView(name = ProcessingView.VIEW_PATH)
 public class ProcessingView extends Processing implements View {
 
 	@Value("${upload-path}")
 	private String uploadPath;
-	
+
 	public static final String VIEW_PATH = "processing";
 	Map<String, String> processStatus;
 
@@ -70,24 +70,21 @@ public class ProcessingView extends Processing implements View {
 			// split at "/", add each part as a label
 			String[] params = event.getParameters().split("/");
 			String testCase = params[0];
-			String template = params[1];
-			System.out.println("testCase : " + testCase);
 
 			UI.getCurrent().setPollInterval(500);
-			
+
 			// String[] executionSteps = WTEUtils.getEnumArray(ExecutionStepType.class);
 			// String executionStep = executionSteps[0];
+			testRunName.setValue(testCase);
 			setTimeout(() -> {
 				try {
-					updateStatus(testCase, template);
+					updateStatus(testCase);
 				} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException
 						| SecurityException e) {
 					e.printStackTrace();
 				}
 			}, 1000);
-			
-			
-			
+
 			pageInit();
 			/*
 			 * try {
@@ -99,11 +96,11 @@ public class ProcessingView extends Processing implements View {
 		}
 	}
 
-	public void updateStatus(String testCase, String template)
+	public void updateStatus(String testCase)
 			throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 
-//		downloadButton.addClickListener(evnt -> download(testCase, template));
-		
+		// downloadButton.addClickListener(evnt -> download(testCase, template));
+
 		processStatus = new HashMap<String, String>();
 
 		// ui.access(() -> progressBar0.setValue(0.1f));
@@ -112,8 +109,6 @@ public class ProcessingView extends Processing implements View {
 			String executionStep = executionStepType.getExecutionStep();
 			// ProcessingView.class.getField("progressBar" + index).setFloat(this, 0.0f);
 			ExecutionStatusType resultStatus = getResult(testCase, executionStep);
-			System.out.println(
-					"1 resultStatus: " + resultStatus + " testCase: " + testCase + " executionStep: " + executionStep);
 			while (resultStatus == null || ExecutionStatusType.IN_PROGRESS.equals(resultStatus)) {
 				if (ExecutionStepType.FileGeneration.getExecutionStep().equals(executionStep)) {
 					processInProgress(progressBar0, success0, fail0);
@@ -147,28 +142,45 @@ public class ProcessingView extends Processing implements View {
 
 			if (ExecutionStatusType.COMPLETED.equals(resultStatus)) {
 				// Processing.class.getField("progressBar" + index).setFloat(this, 1.0f);
+				ProcessValidationResult processValidationResult = getResultDetails(testCase, executionStep);
 				if (ExecutionStepType.FileGeneration.getExecutionStep().equals(executionStep)) {
 					processCompleted(progressBar0, success0, fail0);
-					download(testCase, template);
+					download(testCase);
 					downloadButton.setVisible(true);
+					// testSuiteButton.removeClickListener(listener);
+					testSuiteButton.addClickListener(event -> {
+						getUI().getNavigator().navigateTo(TestSuiteView.VIEW_PATH + "/" + testCase);
+					});
+					testSuiteButton.setVisible(true);
 				} else if (ExecutionStepType.FTPTransfer.getExecutionStep().equals(executionStep)) {
 					processCompleted(progressBar1, success1, fail1);
 				} else if (ExecutionStepType.ProcessValidationEdgeToRaw.getExecutionStep().equals(executionStep)) {
+					totalRecs_EdgeToRaw.setValue("Total Records: " + processValidationResult.getTotalRecordsCount());
+					validRecs_EdgeToRaw.setValue("Valid Records: 10");
+					invalidRecords_EdgeToRaw.setValue("Invalid Records: 10");
 					processCompleted(progressBar2, success2, fail2);
 				} else if (ExecutionStepType.ProcessValidationRawToRA.getExecutionStep().equals(executionStep)) {
+					totalRecs_RAWToRA.setValue("Total Records: " + processValidationResult.getTotalRecordsCount());
+					validRecs_RawToRa.setValue("Valid Records: " + processValidationResult.getValidRecordsCount());
+					invalidRecs_RawToRA.setValue("Invalid Records: " + processValidationResult.getInvalidRecordsCount());
 					processCompleted(progressBar3, success3, fail3);
 				} else if (ExecutionStepType.ProcessValidationRAToRaw.getExecutionStep().equals(executionStep)) {
+					totalRecs_RAToRaw.setValue("Total Records: " + processValidationResult.getTotalRecordsCount());
+					validRecs_RAToRaw.setValue("Valid Records: " + processValidationResult.getValidRecordsCount());
+					invalidRecs_RAToRaw.setValue("Invalid Records: " + processValidationResult.getInvalidRecordsCount());
 					processCompleted(progressBar4, success4, fail4);
 				} else if (ExecutionStepType.ProcessValidationRawToR.getExecutionStep().equals(executionStep)) {
+					totalRecs_RawToR.setValue("Total Records: " + processValidationResult.getTotalRecordsCount());
+					validRecs_RawToR.setValue("Valid Records: " + processValidationResult.getValidRecordsCount());
+					invalidRecs_RawToR.setValue("Invalid Records: " + processValidationResult.getInvalidRecordsCount());
 					processCompleted(progressBar5, success5, fail5);
 					System.out.println("final step : " + executionStep);
 					ui.setPollInterval(-1);
 				}
 
-				ProcessValidationResult processValidationResult = getResultDetails(testCase, executionStep);
 				System.out.println("3 processValidationResult: " + resultStatus + " testCase: " + testCase
 						+ " executionStep: " + executionStep + " processValidationResult : " + processValidationResult);
-				processStatus.put(executionStep, ExecutionStatusType.COMPLETED.toString());
+				// processStatus.put(executionStep, ExecutionStatusType.COMPLETED.toString());
 				// refreshGrid();
 
 			} else if (ExecutionStatusType.ERROR.equals(resultStatus)) {
@@ -204,7 +216,7 @@ public class ProcessingView extends Processing implements View {
 			});
 		}
 	}
-	
+
 	private void processCompleted(ProgressBar progressBar, Label success, Label fail) {
 		ui.access(() -> {
 			progressBar.setVisible(false);
@@ -212,7 +224,7 @@ public class ProcessingView extends Processing implements View {
 			fail.setVisible(false);
 		});
 	}
-	
+
 	private void processError(ProgressBar progressBar, Label success, Label fail) {
 		ui.access(() -> {
 			progressBar.setVisible(false);
@@ -226,6 +238,9 @@ public class ProcessingView extends Processing implements View {
 		ExecutionStatusType executionStatusType = null;
 
 		ExecutionContext executionContext = testEngine.getTestResult(testCase);
+		if (executionContext == null) {
+			executionContext = WTEUtils.jaxbXMLToObject(testCase, uploadPath);
+		}
 		if (executionContext != null) {
 			executionStatusType = WTEUtils.getExecutionSatus(executionContext, executionStep);
 		}
@@ -237,6 +252,9 @@ public class ProcessingView extends Processing implements View {
 		ProcessValidationResult processValidationResult = null;
 
 		ExecutionContext executionContext = testEngine.getTestResult(testCase);
+		if (executionContext == null) {
+			executionContext = WTEUtils.jaxbXMLToObject(testCase, uploadPath);
+		}
 		if (executionContext != null && executionContext.getTaskSatusDetailsMap() != null) {
 			ExecutionStepType executionStepType = WTEUtils.getExecutionStep(executionStep);
 			processValidationResult = executionContext.getTaskSatusDetailsMap().get(executionStepType);
@@ -254,10 +272,11 @@ public class ProcessingView extends Processing implements View {
 			}
 		}).start();
 	}
-	
+
 	private void pageInit() {
-		//progressBar0.setWidth(200, Sizeable.Unit.PIXELS);
+		// progressBar0.setWidth(200, Sizeable.Unit.PIXELS);
 		downloadButton.setVisible(false);
+		testSuiteButton.setVisible(false);
 		fail0.setVisible(false);
 		fail1.setVisible(false);
 		fail2.setVisible(false);
@@ -271,35 +290,55 @@ public class ProcessingView extends Processing implements View {
 		success4.setVisible(false);
 		success5.setVisible(false);
 	}
-	
-	private void download(String testCase, String template) {
-		StreamResource myResource = createResource(testCase, template);
-        FileDownloader fileDownloader = new FileDownloader(myResource);
-        if(fileDownloader.getExtensions()!=null && fileDownloader.getExtensions().size()>0){
-             fileDownloader.remove();
-        }
-        fileDownloader.extend(downloadButton);
+
+	private void download(String testCase) {
+		StreamResource myResource = createResource(testCase);
+		FileDownloader fileDownloader = new FileDownloader(myResource);
+		if (fileDownloader.getExtensions() != null && fileDownloader.getExtensions().size() > 0) {
+			fileDownloader.remove();
+		}
+		fileDownloader.extend(downloadButton);
 
 	}
-	
-	public StreamResource createResource(String testCase, String template) {
 
-        return new StreamResource(new StreamSource() {
-               @Override
-               public InputStream getStream() {
-                     try {
-                    	String filePath = uploadPath + File.separator + testCase + File.separator + "TestData" + File.separator +  template + "_" +testCase + ".txt";
-                    	File file = new File(filePath);
-                            return new FileInputStream(file);
-                     } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                     }
-                     return null;
+	public StreamResource createResource(String testCase) {
 
-               }
+		return new StreamResource(new StreamSource() {
+			@Override
+			public InputStream getStream() {
+				try {
 
-        }, testCase + ".txt");
- }
+					String fileName = null;
 
+					ExecutionContext executionContext = testEngine.getTestResult(testCase);
+					if (executionContext == null) {
+						executionContext = WTEUtils.jaxbXMLToObject(testCase, uploadPath);
+					}
+					if (executionContext != null && executionContext.getConfigDataMap() != null) {
+						fileName = executionContext.getConfigDataMap().get("templatePattern")
+								+ executionContext.getResultFolderName() + ".txt";
+					}
+					String filePath = uploadPath + File.separator + testCase + File.separator + "TestData"
+							+ File.separator + fileName;
+					File file = new File(filePath);
+					return new FileInputStream(file);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				return null;
+
+			}
+
+		}, testCase + ".txt");
+	}
+
+	private void navigateTo(String page, String[] params) {
+		String pathParam = "";
+		for (String param : params) {
+
+		}
+		getUI().getNavigator().navigateTo(page);
+
+	}
 
 }

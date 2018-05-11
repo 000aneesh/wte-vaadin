@@ -90,22 +90,22 @@ public class TestRunLogic implements Serializable {
 		return null;
 	}
 
-	public void saveProduct(Product product) {
-		view.showSaveNotification(product.getProductName() + " (" + product.getId() + ") updated");
-		view.clearSelection();
-		view.editProduct(null);
-		view.updateProduct(product);
-		setFragmentParameter("");
+	public void saveProduct() {
+//		view.showSaveNotification(product.getProductName() + " (" + product.getId() + ") updated");
+//		view.clearSelection();
+//		view.editProduct(null);
+//		view.updateProduct(product);
+//		setFragmentParameter("");
 	}
 
-	public void deleteProduct(Product product) {
+	public void deleteProduct() {
 
-		view.showSaveNotification(product.getProductName() + " (" + product.getId() + ") removed");
-
-		view.clearSelection();
-		view.editProduct(null);
-		view.removeProduct(product);
-		setFragmentParameter("");
+//		view.showSaveNotification(product.getProductName() + " (" + product.getId() + ") removed");
+//
+//		view.clearSelection();
+//		view.editProduct(null);
+//		view.removeProduct(product);
+//		setFragmentParameter("");
 	}
 
 	public void editProduct(TestRunHistory product) {
@@ -123,8 +123,8 @@ public class TestRunLogic implements Serializable {
 		view.editProduct(new TestRunHistory());
 	}
 
-	public void rowSelected(TestRunHistory product) {
-		view.editProduct(product);
+	public void rowSelected(TestRunHistory testRun) {
+		view.editProduct(testRun);
 
 	}
 

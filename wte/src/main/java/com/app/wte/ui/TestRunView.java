@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.app.wte.constants.WTEConstants;
 import com.app.wte.ui.HomeView.HomeFormFactory;
 import com.app.wte.ui.TestRunLogic.TestRunLogicFactory;
 import com.app.wte.util.TestResultComponent;
@@ -20,6 +21,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.SingleSelect;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -62,7 +64,7 @@ public class TestRunView extends CssLayout implements View {
 		filter.setStyleName("filter-textfield");
 		filter.setPlaceholder("Filter");
 		// Trigger a refresh of data when the filter is updated
-		filter.addValueChangeListener(event -> filterDataProvider.setFilter(event.getValue()));
+	//	filter.addValueChangeListener(event -> filterDataProvider.setFilter(event.getValue()));
 
 		newTestRun = new Button("New Test Run");
 		newTestRun.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -120,12 +122,12 @@ public class TestRunView extends CssLayout implements View {
 		form.editProduct(product);
 	}
 
-	public void updateProduct(Product product) {
+	public void updateProduct() {
 		// dataProvider.save(product);
 		// TODO: Grid used to scroll to the updated item
 	}
 
-	public void removeProduct(Product product) {
+	public void removeProduct() {
 		// dataProvider.delete(product);
 	}
 
@@ -141,7 +143,10 @@ public class TestRunView extends CssLayout implements View {
 
 		grid = new TestRunHistoryGrid();
 		grid.asSingleSelect().addValueChangeListener(event -> {
-			viewLogic.rowSelected(grid.getSelectedRow());
+			SingleSelect<TestRunHistory> selection = grid.asSingleSelect();
+	        System.out.println(selection.getValue().getName() + " was selected");
+	        
+	        getUI().getNavigator().navigateTo(ProcessingView.VIEW_PATH +"/"+ selection.getValue().getName());
 			});
 
 //		 filterDataProvider = dataProvider.withConfigurableFilter();

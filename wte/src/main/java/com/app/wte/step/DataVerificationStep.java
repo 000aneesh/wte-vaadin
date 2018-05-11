@@ -20,25 +20,6 @@ import com.app.wte.util.WTEUtils;
 
 @Service(value="dataVerificationStep")
 public class DataVerificationStep implements TestExecutionStep {
-
-	@Override
-	public void preprocess(ExecutionContext executionContext) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void execute(ExecutionContext executionContext) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void postProcess(ExecutionContext executionContext) {
-		// TODO Auto-generated method stub
-		
-	}/*
-	
 	
 	@Value("${upload-path}")
 	public String uploadPath;
@@ -83,4 +64,4 @@ public class DataVerificationStep implements TestExecutionStep {
 		}
 		
 	}
-*/}
+}

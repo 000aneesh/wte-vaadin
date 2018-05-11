@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Scope;
 import com.app.wte.constants.WTEConstants;
 import com.app.wte.testengine.TestEngine;
 import com.app.wte.util.ConfigurationComponent;
+import com.app.wte.util.WTEUtils;
 import com.vaadin.data.BeanValidationBinder;
 import com.vaadin.data.Binder;
 import com.vaadin.data.StatusChangeEvent;
@@ -265,9 +266,11 @@ public class HomeView extends Home {
 		@Override
 		public void uploadSucceeded(SucceededEvent event) {
 
-			testEngine.createTestSuite(testCase.getValue(), fileName, templateName.getValue(), testCase.getValue());
+			String uniqueTimeStamp = WTEUtils.getUniqueTimeStamp();
+					
+			testEngine.createTestSuite(testCase.getValue(), fileName, templateName.getValue(), uniqueTimeStamp);
 
-			getUI().getNavigator().navigateTo(WTEConstants.PROCESSINGVIEW + "/" + testCase.getValue() + "/" + templateName.getValue());
+			getUI().getNavigator().navigateTo(ProcessingView.VIEW_PATH + "/" + testCase.getValue());
 
 		}
 

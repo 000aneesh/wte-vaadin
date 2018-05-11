@@ -204,7 +204,7 @@ public class HomeViewBkup extends Home implements View {
 			// Notification.Type.TRAY_NOTIFICATION);
 			testEngine.createTestSuite(testCase.getValue(), fileName, templateName.getValue(), testCase.getValue());
 
-			getUI().getNavigator().navigateTo(WTEConstants.PROCESSINGVIEW + "/" + testCase.getValue());
+			getUI().getNavigator().navigateTo(ProcessingView.VIEW_PATH + "/" + testCase.getValue());
 			// System.out.println("uploadSucceeded");
 
 			// outputFile = receiveUpload(inputFile);
